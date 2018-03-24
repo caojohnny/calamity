@@ -89,11 +89,6 @@ public class CalamityBufImpl implements CalamityBuf {
     }
 
     @Override
-    public byte[] array() {
-        return this.byteStore.array();
-    }
-
-    @Override
     public void reset() {
     }
 

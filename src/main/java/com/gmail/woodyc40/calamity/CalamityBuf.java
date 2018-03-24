@@ -42,19 +42,6 @@ public interface CalamityBuf extends Component {
     void writeFrom(int toIndex, byte[] from, int fromIndex, int length);
 
     /**
-     * Obtains the data contained in this buffer as an
-     * array.
-     *
-     * <p>There are no guarantees made about whether or not
-     * this array will reflect changes in the buffer, or if
-     * the array even is the same used by the buffer.</p>
-     *
-     * @return the array representation of the data held in
-     * this buffer
-     */
-    byte[] array();
-
-    /**
      * Resets the indexes of the buffer.
      *
      * <p>There is no specific functionality that should be

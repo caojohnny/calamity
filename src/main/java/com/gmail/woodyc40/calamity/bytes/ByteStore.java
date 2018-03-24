@@ -50,7 +50,7 @@ public interface ByteStore extends Component {
      * @param newLength the new length which should be
      * consumed by the memory space
      */
-    void resize(int newLength);
+    void setLength(int newLength);
 
     /**
      * Obtains the data stored in this {@code ByteStore} as

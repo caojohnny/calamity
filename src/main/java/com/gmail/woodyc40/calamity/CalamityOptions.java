@@ -1,7 +1,7 @@
 package com.gmail.woodyc40.calamity;
 
-import com.gmail.woodyc40.calamity.bytes.ArrayByteStore;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
+import com.gmail.woodyc40.calamity.bytes.SafeArrayByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
 import com.gmail.woodyc40.calamity.resize.DoublingResizer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
@@ -14,6 +14,9 @@ import java.util.function.Supplier;
  * passed to a constructed buffer in order to customize
  * functionality.
  *
+ * <p>Default values returned can be determined from looking
+ * at the JavaDoc comments for each getter method.</p>
+ *
  * @author agenttroll
  */
 public final class CalamityOptions {
@@ -22,12 +25,12 @@ public final class CalamityOptions {
      * by the default implementation in order to coalesce
      * changes to said defaults in this class.
      */
-    private static final CalamityOptions DEFAULT = newBuilder().immutable(true);
+    private static final CalamityOptions DEFAULT = newBuilder().lock(true);
 
     /**
      * The implementation of the byte storage device to use
      */
-    private Supplier<ByteStore> byteStoreSupplier = ArrayByteStore::new;
+    private Supplier<ByteStore> byteStoreSupplier = SafeArrayByteStore::new;
     /**
      * The initial length of the buffer
      */
@@ -56,7 +59,7 @@ public final class CalamityOptions {
      * Whether or not this set of options should be
      * immutable and done with modification
      */
-    private boolean immutable;
+    private boolean locked;
 
     // INSTANTIATION ---------------------------------------
 
@@ -169,25 +172,28 @@ public final class CalamityOptions {
     }
 
     /**
-     * Sets the builder to immutable, and disallows future
-     * changes to the options set.
+     * Locks this builder and prevents further changes from
+     * being made to its options.
      *
      * <p>Once set to {@code true}, it may not be changed
      * to {@code false}.</p>
      *
-     * @param immutable {@code true} to set immutable.
+     * @param locked {@code true} to set immutable.
      * @return the current instance of the options builder
      */
-    public CalamityOptions immutable(boolean immutable) {
+    public CalamityOptions lock(boolean locked) {
         this.checkImmutable();
-        this.immutable = immutable;
+        this.locked = locked;
         return this;
     }
 
     // GETTERS ---------------------------------------------
 
     /**
-     * Obtains the byte storage device to use.
+     * Creates a new instance of the byte storage device.
+     *
+     * <p>By default, the byte store used is an instance
+     * of {@link SafeArrayByteStore}.</p>
      *
      * @return the byte storage device
      */
@@ -199,6 +205,8 @@ public final class CalamityOptions {
      * Obtains the initial length which to allocate the
      * memory space used by the buffer.
      *
+     * <p>By default, the initial length is {@code 16}.</p>
+     *
      * @return the buffer's initial length
      */
     public int initialLength() {
@@ -208,6 +216,9 @@ public final class CalamityOptions {
     /**
      * Obtains the resizer that will be used by the buffer.
      *
+     * <p>By default, the resizer to use is an instance of
+     * {@link DoublingResizer}.</p>
+     *
      * @return the resizing policy to use
      */
     public Resizer resizer() {
@@ -215,8 +226,11 @@ public final class CalamityOptions {
     }
 
     /**
-     * Obtains the limit of bytes that may be written and
-     * held in the buffer at the same time.
+     * Obtains the limit of bytes that may be held in the
+     * buffer.
+     *
+     * <p>By default, this returns
+     * {@link Constants#ARRAY_MAX_SIZE}.</p>
      *
      * @return the number of bytes that may be written to
      * the buffer
@@ -229,6 +243,8 @@ public final class CalamityOptions {
      * Checks to determine whether the buffer will
      * automatically free read bytes off of the buffer.
      *
+     * <p>By default, auto-freeing is not used.</p>
+     *
      * @return {@code true} to indicate that bytes will be
      * freed as they are read
      */
@@ -239,6 +255,8 @@ public final class CalamityOptions {
     /**
      * Checks to determine whether the buffer should be
      * thread-safe.
+     *
+     * <p>By default, the buffer is not thread-safe.</p>
      *
      * @return {@code true} to ensure thread-safety
      */
@@ -286,7 +304,7 @@ public final class CalamityOptions {
                 store,
                 this.initialLength,
                 this.resizer);
-        this.immutable = true;
+        this.locked = true;
         return buf;
     }
 
@@ -296,7 +314,7 @@ public final class CalamityOptions {
      * the call from proceeding.
      */
     private void checkImmutable() {
-        if (this.immutable) {
+        if (this.locked) {
             throw new IllegalStateException("Instance of CalamityOptions is immutable");
         }
     }

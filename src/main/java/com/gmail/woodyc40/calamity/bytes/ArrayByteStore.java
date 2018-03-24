@@ -5,6 +5,9 @@ package com.gmail.woodyc40.calamity.bytes;
  * array is used and resized as needed in order for bytes
  * written to the buffer to be stored.
  *
+ * <p>The array returned by this store's {@link #array()}
+ * method is the raw underlying array.</p>
+ *
  * @author agenttroll
  */
 public class ArrayByteStore implements ByteStore {
@@ -24,7 +27,7 @@ public class ArrayByteStore implements ByteStore {
     }
 
     @Override
-    public void resize(int newLength) {
+    public void setLength(int newLength) {
         byte[] newBytes = new byte[newLength];
         System.arraycopy(this.bytes, 0, newBytes, 0, this.bytes.length);
         this.bytes = newBytes;

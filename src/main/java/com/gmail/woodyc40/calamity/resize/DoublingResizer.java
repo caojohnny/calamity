@@ -2,6 +2,7 @@ package com.gmail.woodyc40.calamity.resize;
 
 import com.gmail.woodyc40.calamity.CalamityBuf;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
+import com.gmail.woodyc40.calamity.util.Constants;
 
 /**
  * A resizing policy that will double the length of the
@@ -32,9 +33,23 @@ public class DoublingResizer extends AbstractResizer {
     }
 
     @Override
-    public void resize(CalamityBuf buf, int beginIndex, int additional) {
+    public void resize(CalamityBuf buf, int beginIndex, int length) {
         ByteStore byteStore = buf.byteStore();
-        int required = byteStore.length() + additional;
-        byteStore.resize(required);
+
+        int newLength = byteStore.length();
+        int requiredLength = beginIndex + length;
+        if (requiredLength > newLength) {
+            newLength <<= 1;
+        }
+
+        if (requiredLength > newLength) {
+            newLength = requiredLength;
+        }
+
+        if (newLength < 0 || newLength > Constants.ARRAY_MAX_SIZE) {
+            throw new OutOfMemoryError(String.format("Buffer length overflow (newLength = %d)", newLength));
+        }
+
+        byteStore.setLength(newLength);
     }
 }

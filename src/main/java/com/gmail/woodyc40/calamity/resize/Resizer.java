@@ -13,7 +13,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  *
  * <p>Resizing is completely handled by this method, and
  * implementors should call
- * {@link com.gmail.woodyc40.calamity.bytes.ByteStore#resize(int)}
+ * {@link com.gmail.woodyc40.calamity.bytes.ByteStore#setLength(int)}
  * whenever necessary to achieve the desired effects of the
  * resizing operation.</p>
  *
@@ -35,8 +35,8 @@ public interface Resizer extends Component {
      * @param buf the buffer that will experience a resize
      * @param beginIndex the index at which the data will
      * potentially need to be added
-     * @param additional the additional bytes that will be
-     * added to the buffer
+     * @param length the number of bytes to be added
+     * starting at the {@code beginIndex}
      */
-    void resize(CalamityBuf buf, int beginIndex, int additional);
+    void resize(CalamityBuf buf, int beginIndex, int length);
 }
