@@ -226,6 +226,7 @@ interface Object2IntFunction<K> extends Function<K, Integer>, java.util.function
      */
     @Deprecated
     @Override
+    @SuppressWarnings("FunctionalInterfaceMethodChanged")
     default Integer get(final Object key) {
         final Object k = (key);
         final int v = getInt(k);
