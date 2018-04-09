@@ -3,6 +3,8 @@ package com.gmail.woodyc40.calamity;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.bytes.SafeArrayByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
+import com.gmail.woodyc40.calamity.indexer.DefaultIndexer;
+import com.gmail.woodyc40.calamity.indexer.Indexer;
 import com.gmail.woodyc40.calamity.resize.DoublingResizer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 import com.gmail.woodyc40.calamity.util.Constants;
@@ -40,6 +42,11 @@ public final class CalamityOptions {
      * reallocation
      */
     private Resizer resizer = DoublingResizer.INSTANCE;
+    /**
+     * The indexer component used for handling buffer
+     * indexes
+     */
+    private Supplier<Indexer> indexer = DefaultIndexer::new;
     /**
      * The limit of writable bytes to the buffer
      */
@@ -127,6 +134,18 @@ public final class CalamityOptions {
     public CalamityOptions resizer(Resizer resizer) {
         this.checkImmutable();
         this.resizer = resizer;
+        return this;
+    }
+
+    /**
+     * Sets the indexer for the buffer.
+     *
+     * @param indexer the indexer to use
+     * @return the current instance of the options builder
+     */
+    public CalamityOptions indexer(Supplier<Indexer> indexer) {
+        this.checkImmutable();
+        this.indexer = indexer;
         return this;
     }
 
@@ -226,6 +245,19 @@ public final class CalamityOptions {
     }
 
     /**
+     * Obtains the indexer that will be used to hold the
+     * buffer index mappings.
+     *
+     * <p>By default, the indexer to use is an instance of
+     * {@link DefaultIndexer}.</p>
+     *
+     * @return the index handler
+     */
+    public Indexer indexer() {
+        return this.indexer.get();
+    }
+
+    /**
      * Obtains the limit of bytes that may be held in the
      * buffer.
      *
@@ -283,6 +315,7 @@ public final class CalamityOptions {
                 .byteStore(this.byteStoreSupplier)
                 .initialLength(this.initialLength)
                 .resizer(this.resizer)
+                .indexer(this.indexer)
                 .writableLimit(this.writableLimit)
                 .autoFree(this.autoFree);
     }
@@ -298,12 +331,14 @@ public final class CalamityOptions {
         if (this.threadSafe) {
             checkThreadSafety(store);
             checkThreadSafety(this.resizer);
+            checkThreadSafety(this.indexer.get());
         }
 
         CalamityBuf buf = CalamityBufImpl.alloc(
                 store,
                 this.initialLength,
-                this.resizer);
+                this.resizer,
+                this.indexer.get());
         this.locked = true;
         return buf;
     }

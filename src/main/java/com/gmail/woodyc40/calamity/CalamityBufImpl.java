@@ -1,7 +1,12 @@
 package com.gmail.woodyc40.calamity;
 
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
+import com.gmail.woodyc40.calamity.indexer.IndexKey;
+import com.gmail.woodyc40.calamity.indexer.Indexer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
+
+import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
+import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 
 /**
  * The primary implementation of the Calamity buffers
@@ -19,6 +24,10 @@ public class CalamityBufImpl implements CalamityBuf {
      * The resizing component provided to the buffer
      */
     private final Resizer resizer;
+    /**
+     * The indexer used to hold index key to index mappings
+     */
+    private final Indexer indexer;
 
     /**
      * Creates the buffer implementation with the given
@@ -29,11 +38,14 @@ public class CalamityBufImpl implements CalamityBuf {
      * @param initialLength the initial length of the buffer
      * @param resizer the resizing component
      */
-    private CalamityBufImpl(ByteStore byteStore, int initialLength, Resizer resizer) {
+    private CalamityBufImpl(ByteStore byteStore, int initialLength, Resizer resizer, Indexer indexer) {
         this.byteStore = byteStore;
         this.byteStore.init(initialLength);
-
         this.resizer = resizer;
+        this.indexer = indexer;
+
+        this.indexer.setIdx(READER, 0);
+        this.indexer.setIdx(WRITER, 0);
     }
 
     /**
@@ -57,7 +69,7 @@ public class CalamityBufImpl implements CalamityBuf {
      */
     public static CalamityBufImpl alloc(int initialLength) {
         CalamityOptions options = CalamityOptions.getDefault();
-        return alloc(options.byteStore(), initialLength, options.resizer());
+        return alloc(options.byteStore(), initialLength, options.resizer(), options.indexer());
     }
 
     /**
@@ -71,13 +83,26 @@ public class CalamityBufImpl implements CalamityBuf {
      * @return a new instance of the buffer with the given
      * settings set
      */
-    public static CalamityBufImpl alloc(ByteStore byteStore, int initialLength, Resizer resizer) {
-        return new CalamityBufImpl(byteStore, initialLength, resizer);
+    public static CalamityBufImpl alloc(ByteStore byteStore,
+                                        int initialLength,
+                                        Resizer resizer,
+                                        Indexer indexer) {
+        return new CalamityBufImpl(byteStore, initialLength, resizer, indexer);
     }
 
     @Override
     public ByteStore byteStore() {
         return this.byteStore;
+    }
+
+    @Override
+    public int idx(IndexKey key) {
+        return this.indexer.idx(key);
+    }
+
+    @Override
+    public void setIdx(IndexKey key, int idx) {
+        this.indexer.setIdx(key, idx);
     }
 
     @Override
@@ -89,13 +114,26 @@ public class CalamityBufImpl implements CalamityBuf {
     }
 
     @Override
+    public int writeTo(byte[] to) {
+        return 0;
+    }
+
+    @Override
+    public int writeTo(int toIndex, byte[] to, int fromIndex, int length) {
+        return 0;
+    }
+
+    @Override
     public void reset() {
+        this.byteStore.reset();
+        this.indexer.reset();
     }
 
     @Override
     public void free() {
         this.byteStore.free();
         this.resizer.free();
+        this.indexer.free();
     }
 
     @Override

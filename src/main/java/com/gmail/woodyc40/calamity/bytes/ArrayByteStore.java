@@ -39,6 +39,10 @@ public class ArrayByteStore implements ByteStore {
     }
 
     @Override
+    public void reset() {
+    }
+
+    @Override
     public boolean isThreadSafe() {
         return false;
     }

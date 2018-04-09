@@ -2,6 +2,7 @@ package com.gmail.woodyc40.calamity;
 
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
+import com.gmail.woodyc40.calamity.indexer.IndexKey;
 
 /**
  * The Calamity buffers specification.
@@ -24,7 +25,28 @@ public interface CalamityBuf extends Component {
     ByteStore byteStore();
 
     /**
+     * Obtains the index that has been mapped to the given
+     * key.
+     *
+     * @param key the key which to find the mapped index
+     * @return the index mapped to the key, or {@code -1} if
+     * the key has not been mapped yet
+     */
+    int idx(IndexKey key);
+
+    /**
+     * Maps the given index to the given key.
+     *
+     * @param key the key which to map the index
+     * @param idx the index which to map to the key
+     */
+    void setIdx(IndexKey key, int idx);
+
+    /**
      * Writes to the buffer from the given byte array.
+     *
+     * <p>{@implNote This should be semantically equivalent
+     * to writing {@code writeFrom(}}</p>
      *
      * @param from the data to write to the buffer
      */
@@ -40,6 +62,26 @@ public interface CalamityBuf extends Component {
      * buffer
      */
     void writeFrom(int toIndex, byte[] from, int fromIndex, int length);
+
+    /**
+     * Writes to the given array from this buffer.
+     *
+     * @param to the target array which to write the buffer
+     * contents
+     * @return
+     */
+    int writeTo(byte[] to);
+
+    /**
+     * Writes to the given array from this buffer.
+     *
+     * @param toIndex
+     * @param to
+     * @param fromIndex
+     * @param length
+     * @return
+     */
+    int writeTo(int toIndex, byte[] to, int fromIndex, int length);
 
     /**
      * Resets the indexes of the buffer.

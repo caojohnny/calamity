@@ -64,4 +64,18 @@ public interface ByteStore extends Component {
      * @return a byte array containing the data
      */
     byte[] array();
+
+    /**
+     * Resets the byte storage area, without necessarily
+     * freeing memory (although that may be done as well).
+     *
+     * <p>This prepares the byte store to accept new bytes
+     * without regard for previously written/read bytes. No
+     * action may even be taken at all, because the
+     * behavior of the previous bytes should be handled by
+     * the indexer, however implementations are free to
+     * release resources or allocate more to accommodate
+     * the state of the buffer being set back to empty.</p>
+     */
+    void reset();
 }
