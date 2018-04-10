@@ -68,18 +68,21 @@ public interface CalamityBuf extends Component {
      *
      * @param to the target array which to write the buffer
      * contents
-     * @return
+     * @return the number of bytes written
      */
     int writeTo(byte[] to);
 
     /**
      * Writes to the given array from this buffer.
      *
-     * @param toIndex
-     * @param to
-     * @param fromIndex
-     * @param length
-     * @return
+     * @param toIndex the index at which to begin writing
+     * to the destination
+     * @param to the destination array
+     * @param fromIndex the index at which to begin reading
+     * from the buffer
+     * @param length the number of bytes to write from the
+     * buffer
+     * @return the number of bytes written
      */
     int writeTo(int toIndex, byte[] to, int fromIndex, int length);
 
