@@ -106,11 +106,13 @@ public class CalamityBufImpl implements CalamityBuf {
     }
 
     @Override
-    public void writeFrom(byte[] bytes) {
+    public int writeFrom(byte[] bytes) {
+        return 0;
     }
 
     @Override
-    public void writeFrom(int toIndex, byte[] from, int fromIndex, int length) {
+    public int writeFrom(int toIndex, byte[] from, int fromIndex, int length) {
+        return 0;
     }
 
     @Override

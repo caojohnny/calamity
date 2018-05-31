@@ -49,8 +49,10 @@ public interface CalamityBuf extends Component {
      * to writing {@code writeFrom(}}</p>
      *
      * @param from the data to write to the buffer
+     * @return the number of bytes that were actually
+     * written into the buffer
      */
-    void writeFrom(byte[] from);
+    int writeFrom(byte[] from);
 
     /**
      * Writes to the buffer from the given byte array.
@@ -60,15 +62,17 @@ public interface CalamityBuf extends Component {
      * @param fromIndex the index of the data to begin
      * @param length the length of data to write to the
      * buffer
+     * @return the number of bytes that were actually
+     * written into the buffer
      */
-    void writeFrom(int toIndex, byte[] from, int fromIndex, int length);
+    int writeFrom(int toIndex, byte[] from, int fromIndex, int length);
 
     /**
      * Writes to the given array from this buffer.
      *
      * @param to the target array which to write the buffer
      * contents
-     * @return the number of bytes written
+     * @return the number of bytes written into {@code to}
      */
     int writeTo(byte[] to);
 
@@ -82,7 +86,7 @@ public interface CalamityBuf extends Component {
      * from the buffer
      * @param length the number of bytes to write from the
      * buffer
-     * @return the number of bytes written
+     * @return the number of bytes written into {@code to}
      */
     int writeTo(int toIndex, byte[] to, int fromIndex, int length);
 
