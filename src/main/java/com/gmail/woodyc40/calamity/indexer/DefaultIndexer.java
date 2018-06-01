@@ -23,11 +23,11 @@ public class DefaultIndexer implements Indexer {
 
     @Override
     public int idx(IndexKey key) {
-        if (key.equals(READER)) {
+        if (READER.equals(key)) {
             return this.readerIndex;
         }
 
-        if (key.equals(WRITER)) {
+        if (WRITER.equals(key)) {
             return this.writerIndex;
         }
 
@@ -36,11 +36,11 @@ public class DefaultIndexer implements Indexer {
 
     @Override
     public void setIdx(IndexKey key, int idx) {
-        if (key.equals(READER)) {
+        if (READER.equals(key)) {
             this.readerIndex = idx;
         }
 
-        if (key.equals(WRITER)) {
+        if (WRITER.equals(key)) {
             this.writerIndex = idx;
         }
 

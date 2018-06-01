@@ -12,17 +12,17 @@ package com.gmail.woodyc40.calamity.indexer;
  *
  * @author agenttroll
  */
-public class IdentityIndexKey extends IndexKey {
+public final class IdentityIndexKey extends IndexKey {
     /**
      * A special-case key used by the buffer to track the
      * reader index
      */
-    public static final IdentityIndexKey READER = new IdentityIndexKey("calamity.index.reader");
+    public static final IdentityIndexKey READER = new IdentityIndexKey("calamity.index.reader", null);
     /**
      * A special-case key used by the buffer to track the
      * writer index
      */
-    public static final IdentityIndexKey WRITER = new IdentityIndexKey("calamity.index.writer");
+    public static final IdentityIndexKey WRITER = new IdentityIndexKey("calamity.index.writer", null);
 
     private final int hashCode = System.identityHashCode(this);
 
@@ -36,6 +36,16 @@ public class IdentityIndexKey extends IndexKey {
      */
     public IdentityIndexKey(String keyName) {
         super(keyName);
+    }
+
+    /**
+     * An index key that may use internal key names.
+     *
+     * @param keyName the key name to use
+     * @param ignored ignored
+     */
+    IdentityIndexKey(String keyName, Object ignored) {
+        super(keyName, null);
     }
 
     @Override

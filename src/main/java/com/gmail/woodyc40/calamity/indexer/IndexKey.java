@@ -33,6 +33,17 @@ public class IndexKey {
     }
 
     /**
+     * Bypass constructor used to create keys that have
+     * reserved key names.
+     *
+     * @param keyName the key name
+     * @param ignored ignored
+     */
+    IndexKey(String keyName, Object ignored) {
+        this.name = keyName;
+    }
+
+    /**
      * Obtains the name used to identify this key.
      *
      * @return the key name

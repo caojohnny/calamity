@@ -1,4 +1,5 @@
-package com.gmail.woodyc40.calamity;
+import com.gmail.woodyc40.calamity.CalamityBuf;
+import com.gmail.woodyc40.calamity.CalamityBufImpl;
 
 import java.io.File;
 import java.io.FileInputStream;

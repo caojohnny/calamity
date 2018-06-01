@@ -2,6 +2,7 @@ package com.gmail.woodyc40.calamity;
 
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
+import com.gmail.woodyc40.calamity.indexer.IdentityIndexKey;
 import com.gmail.woodyc40.calamity.indexer.IndexKey;
 
 /**
@@ -41,6 +42,68 @@ public interface CalamityBuf extends Component {
      * @param idx the index which to map to the key
      */
     void setIdx(IndexKey key, int idx);
+
+    /**
+     * Appends the given byte to the space at which the
+     * writer {@link #idx(IndexKey)} points.
+     *
+     * <p>As a result of this operation, this buffer's
+     * writer index will increase by one.</p>
+     *
+     * @implNote this method should be equivalent to
+     * writing
+     * {@code
+     *      CalamityBuf buffer = ...
+     *      byte data = ...
+     *
+     *      buffer.write(buffer.idx(IdentityIndexKey.WRITER), data);
+     * }
+     *
+     * @param b the byte to write
+     */
+    default void write(byte b) {
+        this.write(this.idx(IdentityIndexKey.WRITER), b);
+    }
+
+    /**
+     * Sets the byte at the given index to that specified by
+     * the {@code b} parameter.
+     *
+     * @param idx the index to write
+     * @param b the byte to write
+     */
+    void write(int idx, byte b);
+
+    /**
+     * Reads a byte from the buffer. The reader index
+     * always follows the writer index, and therefore
+     * reads the oldest byte in the buffer.
+     *
+     * <p>As a result of this operation, this buffer's
+     * internal reader index will increase to the next
+     * byte.</p>
+     *
+     * @implNote this method should be equivalent to:
+     * {@code
+     *      CalamityBuf buf = ...
+     *      byte read = buf.read(buffer.idx(IdentityIndexKey.READER));
+     * }</p>
+     *
+     * @return the byte read from the "back" of the
+     * buffer
+     */
+    default byte read() {
+        return read(this.idx(IdentityIndexKey.READER));
+    }
+
+    /**
+     * Reads the byte at the given index of the buffer,
+     * without making any changes to indexes involved.
+     *
+     * @param idx the index to read from
+     * @return the byte from the given location
+     */
+    byte read(int idx);
 
     /**
      * Writes to the buffer from the given byte array.
