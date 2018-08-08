@@ -38,7 +38,10 @@ public class CalamityBufImpl implements CalamityBuf {
      * @param initialLength the initial length of the buffer
      * @param resizer the resizing component
      */
-    private CalamityBufImpl(ByteStore byteStore, int initialLength, Resizer resizer, Indexer indexer) {
+    private CalamityBufImpl(ByteStore byteStore,
+                            int initialLength,
+                            Resizer resizer,
+                            Indexer indexer) {
         this.byteStore = byteStore;
         this.byteStore.init(initialLength);
         this.resizer = resizer;
@@ -96,12 +99,22 @@ public class CalamityBufImpl implements CalamityBuf {
     }
 
     @Override
+    public Resizer resizer() {
+        return this.resizer;
+    }
+
+    @Override
+    public Indexer indexer() {
+        return this.indexer;
+    }
+
+    @Override
     public int idx(IndexKey key) {
         return this.indexer.idx(key);
     }
 
     @Override
-    public void setIdx(IndexKey key, int idx) {
+    public void idx(IndexKey key, int idx) {
         this.indexer.setIdx(key, idx);
     }
 

@@ -9,6 +9,7 @@ import com.gmail.woodyc40.calamity.resize.DoublingResizer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 import com.gmail.woodyc40.calamity.util.Constants;
 
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
@@ -41,7 +42,7 @@ public final class CalamityOptions {
      * The resizing component to use for handling memory
      * reallocation
      */
-    private Resizer resizer = DoublingResizer.INSTANCE;
+    private IntFunction<Resizer> resizer = DoublingResizer::new;
     /**
      * The indexer component used for handling buffer
      * indexes
@@ -131,7 +132,7 @@ public final class CalamityOptions {
      * @param resizer the resizer to use
      * @return the current instance of the options builder
      */
-    public CalamityOptions resizer(Resizer resizer) {
+    public CalamityOptions resizer(IntFunction<Resizer> resizer) {
         this.checkImmutable();
         this.resizer = resizer;
         return this;
@@ -241,7 +242,7 @@ public final class CalamityOptions {
      * @return the resizing policy to use
      */
     public Resizer resizer() {
-        return this.resizer;
+        return this.resizer.apply(this.writableLimit);
     }
 
     /**
@@ -330,15 +331,15 @@ public final class CalamityOptions {
         ByteStore store = this.byteStoreSupplier.get();
         if (this.threadSafe) {
             checkThreadSafety(store);
-            checkThreadSafety(this.resizer);
-            checkThreadSafety(this.indexer.get());
+            checkThreadSafety(this.resizer());
+            checkThreadSafety(this.indexer());
         }
 
         CalamityBuf buf = CalamityBufImpl.alloc(
                 store,
                 this.initialLength,
-                this.resizer,
-                this.indexer.get());
+                this.resizer(),
+                this.indexer());
         this.locked = true;
         return buf;
     }
