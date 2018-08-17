@@ -318,7 +318,8 @@ public final class CalamityOptions {
                 .resizer(this.resizer)
                 .indexer(this.indexer)
                 .writableLimit(this.writableLimit)
-                .autoFree(this.autoFree);
+                .autoFree(this.autoFree)
+                .threadSafe(this.threadSafe);
     }
 
     /**
@@ -329,17 +330,19 @@ public final class CalamityOptions {
      */
     public CalamityBuf newBuf() {
         ByteStore store = this.byteStoreSupplier.get();
+        Resizer resizer = this.resizer();
+        Indexer indexer = this.indexer();
         if (this.threadSafe) {
             checkThreadSafety(store);
-            checkThreadSafety(this.resizer());
-            checkThreadSafety(this.indexer());
+            checkThreadSafety(resizer);
+            checkThreadSafety(indexer);
         }
 
         CalamityBuf buf = CalamityBufImpl.alloc(
                 store,
                 this.initialLength,
-                this.resizer(),
-                this.indexer());
+                resizer,
+                indexer);
         this.locked = true;
         return buf;
     }
