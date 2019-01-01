@@ -1,10 +1,7 @@
 package com.gmail.woodyc40.calamity;
 
-import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
 import com.gmail.woodyc40.calamity.indexer.IndexKey;
-import com.gmail.woodyc40.calamity.indexer.Indexer;
-import com.gmail.woodyc40.calamity.resize.Resizer;
 
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
@@ -21,72 +18,7 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
  *
  * @author agenttroll
  */
-public interface CalamityBuf extends Component {
-    /**
-     * Obtains the memory storage scheme used by the buffer.
-     *
-     * @return the {@link ByteStore} used by the buffer
-     */
-    ByteStore byteStore();
-
-    /**
-     * Obtains the resizer used by this buffer.
-     *
-     * @return the buffer resizing component
-     */
-    Resizer resizer();
-
-    /**
-     * Obtains the indexer used to track the index keys for
-     * this particular buffer.
-     *
-     * @return the buffer indexer component
-     */
-    Indexer indexer();
-
-    /**
-     * Obtains the index that has been mapped to the given
-     * key.
-     *
-     * @param key the key which to find the mapped index
-     * @return the index mapped to the key, or {@code -1} if
-     * the key has not been mapped yet
-     */
-    int idx(IndexKey key);
-
-    /**
-     * Maps the given index to the given key.
-     *
-     * @param key the key which to map the index
-     * @param idx the index which to map to the key
-     */
-    void idx(IndexKey key, int idx);
-
-    /**
-     * Obtains the number of bytes that are left to read.
-     * This should be equal to the {@code writer} index
-     * minus the {@code reader} index.
-     *
-     * @return the number of remaining bytes that can be
-     * read from this buffer
-     */
-    default int readable() {
-        return this.idx(WRITER) - this.idx(READER);
-    }
-
-    /**
-     * Obtains the number of bytes that may be further
-     * written into this buffer. This should be equal to
-     * {@link CalamityOptions#writableLimit()} minus the
-     * {@code WRITER} index.
-     *
-     * @return the number of bytes that can be further
-     * written to this buffer
-     */
-    default int writable() {
-        return this.resizer().writableLimit() - this.idx(WRITER);
-    }
-
+public interface CalamityBuf extends Component, StrippedCalmityBuf {
     /**
      * Appends the given byte to the space at which the
      * writer {@link #idx(IndexKey)} points.
@@ -137,7 +69,7 @@ public interface CalamityBuf extends Component {
      * buffer
      */
     default byte read() {
-        return read(this.idx(READER));
+        return this.read(this.idx(READER));
     }
 
     /**
@@ -153,13 +85,17 @@ public interface CalamityBuf extends Component {
      * Writes to the buffer from the given byte array.
      *
      * <p>{@implNote This should be semantically equivalent
-     * to writing {@code writeFrom(}}</p>
+     * to writing {@code writeFrom(idx(WRITER), from, 0,
+     * from.length)}}
+     * </p>
      *
      * @param from the data to write to the buffer
      * @return the number of bytes that were actually
      * written into the buffer
      */
-    int writeFrom(byte[] from);
+    default int writeFrom(byte[] from) {
+        return this.writeFrom(this.idx(WRITER), from, 0, from.length);
+    }
 
     /**
      * Writes to the buffer from the given byte array.
@@ -175,20 +111,30 @@ public interface CalamityBuf extends Component {
     int writeFrom(int toIndex, byte[] from, int fromIndex, int length);
 
     /**
-     * Writes from this buffer beginning at the
+     * Reads from this buffer beginning at the
      * {@code READER} index into the given byte array
      * beginning at {@code 0} until {@code to.length} bytes
-     * have been written, or the buffer runs out of bytes
+     * have been written, or until the buffer runs out of
+     * bytes.
      *
+     * <p>{@implNote This should be semantically equivalent
+     * to writing {@code readTo(0, to, idx(READER),
+     * to.length)}}</p>
      *
      * @param to the target array which to write the buffer
      * contents
      * @return the number of bytes written into {@code to}
      */
-    int writeTo(byte[] to);
+    default int readTo(byte[] to) {
+        return this.readTo(0, to, this.idx(READER), to.length);
+    }
 
     /**
-     * Writes to the given array from this buffer.
+     * Reads into the given array from this buffer,
+     * beginning at {@code fromIndex} and writing into
+     * {@code to[toIndex]}. {@code length} bytes will be
+     * written, unless the buffer runs out of bytes to write
+     * or there is not enough space left in {@code to}.
      *
      * @param toIndex the index at which to begin writing
      * to the destination
@@ -199,7 +145,7 @@ public interface CalamityBuf extends Component {
      * buffer
      * @return the number of bytes written into {@code to}
      */
-    int writeTo(int toIndex, byte[] to, int fromIndex, int length);
+    int readTo(int toIndex, byte[] to, int fromIndex, int length);
 
     /**
      * Resets the indexes of the buffer.

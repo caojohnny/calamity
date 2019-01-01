@@ -1,5 +1,7 @@
 package com.gmail.woodyc40.calamity.comp;
 
+import com.gmail.woodyc40.calamity.CalamityBuf;
+
 /**
  * The component specification.
  *
@@ -10,6 +12,12 @@ package com.gmail.woodyc40.calamity.comp;
  * @author agenttroll
  */
 public interface Component {
+    /**
+     * Defines logic to initialize the component once the
+     * buffer has been instantiated.
+     */
+    void init(CalamityBuf buf);
+
     /**
      * Checks to determine whether or not the implemented
      * component is thread-safe, and may be shared along

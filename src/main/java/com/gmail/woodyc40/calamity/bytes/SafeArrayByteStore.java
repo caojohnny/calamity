@@ -21,4 +21,9 @@ public class SafeArrayByteStore extends ArrayByteStore {
 
         return array;
     }
+
+    @Override
+    public boolean isArrayRaw() {
+        return false;
+    }
 }

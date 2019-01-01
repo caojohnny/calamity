@@ -9,7 +9,6 @@ import com.gmail.woodyc40.calamity.resize.DoublingResizer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 import com.gmail.woodyc40.calamity.util.Constants;
 
-import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
@@ -31,27 +30,27 @@ public final class CalamityOptions {
     private static final CalamityOptions DEFAULT = newBuilder().lock(true);
 
     /**
-     * The implementation of the byte storage device to use
-     */
-    private Supplier<ByteStore> byteStoreSupplier = SafeArrayByteStore::new;
-    /**
      * The initial length of the buffer
      */
     private int initialLength = 16;
     /**
+     * The implementation of the byte storage device to use
+     */
+    private Supplier<ByteStore> byteStoreSupplier = SafeArrayByteStore::new;
+    /**
      * The resizing component to use for handling memory
      * reallocation
      */
-    private IntFunction<Resizer> resizer = DoublingResizer::new;
+    private Supplier<Resizer> resizer = DoublingResizer.SUPPLIER;
     /**
      * The indexer component used for handling buffer
      * indexes
      */
     private Supplier<Indexer> indexer = DefaultIndexer::new;
     /**
-     * The limit of writable bytes to the buffer
+     * The limit on the byte size of this buffer
      */
-    private int writableLimit = Constants.ARRAY_MAX_SIZE;
+    private int maxLength = Constants.ARRAY_MAX_SIZE;
     /**
      * Whether or not to automatically free memory consumed
      * by bytes that have already been read from the buffer
@@ -65,7 +64,7 @@ public final class CalamityOptions {
 
     /**
      * Whether or not this set of options should be
-     * immutable and done with modification
+     * immutable to modification
      */
     private boolean locked;
 
@@ -102,6 +101,18 @@ public final class CalamityOptions {
     // SETTERS ---------------------------------------------
 
     /**
+     * Sets the initial length of the buffer.
+     *
+     * @param initialLength the initial length
+     * @return the current instance of the options builder
+     */
+    public CalamityOptions initialLength(int initialLength) {
+        this.checkImmutable();
+        this.initialLength = initialLength;
+        return this;
+    }
+
+    /**
      * Sets the byte storage component for the constructed
      * buffer to that supplied.
      *
@@ -115,24 +126,12 @@ public final class CalamityOptions {
     }
 
     /**
-     * Sets the initial length of the buffer.
-     *
-     * @param initialLength the initial length
-     * @return the current instance of the options builder
-     */
-    public CalamityOptions initialLength(int initialLength) {
-        this.checkImmutable();
-        this.initialLength = initialLength;
-        return this;
-    }
-
-    /**
      * Sets the resizer for the buffer.
      *
      * @param resizer the resizer to use
      * @return the current instance of the options builder
      */
-    public CalamityOptions resizer(IntFunction<Resizer> resizer) {
+    public CalamityOptions resizer(Supplier<Resizer> resizer) {
         this.checkImmutable();
         this.resizer = resizer;
         return this;
@@ -157,9 +156,9 @@ public final class CalamityOptions {
      * be taken up by the storage device
      * @return the current instance of the options builder
      */
-    public CalamityOptions writableLimit(int writableLimit) {
+    public CalamityOptions maxLength(int writableLimit) {
         this.checkImmutable();
-        this.writableLimit = writableLimit;
+        this.maxLength = writableLimit;
         return this;
     }
 
@@ -210,18 +209,6 @@ public final class CalamityOptions {
     // GETTERS ---------------------------------------------
 
     /**
-     * Creates a new instance of the byte storage device.
-     *
-     * <p>By default, the byte store used is an instance
-     * of {@link SafeArrayByteStore}.</p>
-     *
-     * @return the byte storage device
-     */
-    public ByteStore byteStore() {
-        return this.byteStoreSupplier.get();
-    }
-
-    /**
      * Obtains the initial length which to allocate the
      * memory space used by the buffer.
      *
@@ -234,6 +221,18 @@ public final class CalamityOptions {
     }
 
     /**
+     * Creates a new instance of the byte storage device.
+     *
+     * <p>By default, the byte store used is an instance
+     * of {@link SafeArrayByteStore}.</p>
+     *
+     * @return the byte storage device
+     */
+    public ByteStore newByteStore() {
+        return this.byteStoreSupplier.get();
+    }
+
+    /**
      * Obtains the resizer that will be used by the buffer.
      *
      * <p>By default, the resizer to use is an instance of
@@ -241,8 +240,8 @@ public final class CalamityOptions {
      *
      * @return the resizing policy to use
      */
-    public Resizer resizer() {
-        return this.resizer.apply(this.writableLimit);
+    public Resizer newResizer() {
+        return this.resizer.get();
     }
 
     /**
@@ -254,7 +253,7 @@ public final class CalamityOptions {
      *
      * @return the index handler
      */
-    public Indexer indexer() {
+    public Indexer newIndexer() {
         return this.indexer.get();
     }
 
@@ -268,8 +267,8 @@ public final class CalamityOptions {
      * @return the number of bytes that may be written to
      * the buffer
      */
-    public int writableLimit() {
-        return this.writableLimit;
+    public int maxLength() {
+        return this.maxLength;
     }
 
     /**
@@ -313,11 +312,11 @@ public final class CalamityOptions {
      */
     public CalamityOptions copy() {
         return new CalamityOptions()
-                .byteStore(this.byteStoreSupplier)
                 .initialLength(this.initialLength)
+                .byteStore(this.byteStoreSupplier)
                 .resizer(this.resizer)
                 .indexer(this.indexer)
-                .writableLimit(this.writableLimit)
+                .maxLength(this.maxLength)
                 .autoFree(this.autoFree)
                 .threadSafe(this.threadSafe);
     }
@@ -330,21 +329,15 @@ public final class CalamityOptions {
      */
     public CalamityBuf newBuf() {
         ByteStore store = this.byteStoreSupplier.get();
-        Resizer resizer = this.resizer();
-        Indexer indexer = this.indexer();
+        Resizer resizer = this.newResizer();
+        Indexer indexer = this.newIndexer();
         if (this.threadSafe) {
             checkThreadSafety(store);
             checkThreadSafety(resizer);
             checkThreadSafety(indexer);
         }
 
-        CalamityBuf buf = CalamityBufImpl.alloc(
-                store,
-                this.initialLength,
-                resizer,
-                indexer);
-        this.locked = true;
-        return buf;
+        return CalamityBufImpl.alloc(this.copy().lock(true));
     }
 
     /**

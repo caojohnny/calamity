@@ -1,5 +1,6 @@
 package com.gmail.woodyc40.calamity.indexer;
 
+import com.gmail.woodyc40.calamity.CalamityBuf;
 import com.gmail.woodyc40.calamity.util.Object2IntOpenHashMap;
 
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
@@ -13,12 +14,17 @@ public class DefaultIndexer implements Indexer {
             new Object2IntOpenHashMap<>();
 
     @Override
+    public void init(CalamityBuf buf) {
+    }
+
+    @Override
     public boolean isThreadSafe() {
         return false;
     }
 
     @Override
     public void free() {
+        this.indexes.clear();
     }
 
     @Override

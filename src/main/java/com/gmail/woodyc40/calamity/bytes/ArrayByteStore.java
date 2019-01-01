@@ -1,5 +1,7 @@
 package com.gmail.woodyc40.calamity.bytes;
 
+import com.gmail.woodyc40.calamity.CalamityBuf;
+
 /**
  * A form of byte storage in which a standard {@code byte}
  * array is used and resized as needed in order for bytes
@@ -17,17 +19,17 @@ public class ArrayByteStore implements ByteStore {
     private byte[] bytes;
 
     @Override
-    public void init(int initialLength) {
-        this.bytes = new byte[initialLength];
-    }
-
-    @Override
     public int length() {
         return this.bytes.length;
     }
 
     @Override
     public void setLength(int newLength) {
+        if (this.bytes == null) {
+            this.bytes = new byte[newLength];
+            return;
+        }
+
         byte[] newBytes = new byte[newLength];
         System.arraycopy(this.bytes, 0, newBytes, 0, this.bytes.length);
         this.bytes = newBytes;
@@ -38,8 +40,22 @@ public class ArrayByteStore implements ByteStore {
         return this.bytes;
     }
 
+    public byte[] getRaw() {
+        return this.bytes;
+    }
+
+    @Override
+    public boolean isArrayRaw() {
+        return true;
+    }
+
     @Override
     public void reset() {
+    }
+
+    @Override
+    public void init(CalamityBuf buf) {
+        this.setLength(buf.options().initialLength());
     }
 
     @Override

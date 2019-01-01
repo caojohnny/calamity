@@ -39,12 +39,4 @@ public interface Resizer extends Component {
      * starting at the {@code beginIndex}
      */
     void resize(CalamityBuf buf, int beginIndex, int length);
-
-    /**
-     * Obtains the maximum buffer size that may be attained
-     * by the buffer using this resizer.
-     *
-     * @return the maximum size of the buffer
-     */
-    int writableLimit();
 }

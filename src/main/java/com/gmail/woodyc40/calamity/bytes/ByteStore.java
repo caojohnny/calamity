@@ -15,16 +15,6 @@ import com.gmail.woodyc40.calamity.comp.Component;
  */
 public interface ByteStore extends Component {
     /**
-     * The lazy-initialization hook that is called by the
-     * buffer in order to allocate memory space in this
-     * storage device.
-     *
-     * @param initialLength the initial length, in bytes,
-     * that should be allocated
-     */
-    void init(int initialLength);
-
-    /**
      * Obtains the amount of memory, in bytes, that is
      * consumed by stored bytes.
      *
@@ -64,6 +54,17 @@ public interface ByteStore extends Component {
      * @return a byte array containing the data
      */
     byte[] array();
+
+    /**
+     * Determines whether the {@code byte[]} returned by the
+     * {@link #array()} method returns a byte array that
+     * reflects changes made to it in the buffer.
+     *
+     * @return {@code true} if the array is raw and changes
+     * to the array will be reflected in the buffer,
+     * {@code false} if it is a copy or other
+     */
+    boolean isArrayRaw();
 
     /**
      * Resets the byte storage area, without necessarily
