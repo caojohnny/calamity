@@ -1,10 +1,12 @@
 package com.gmail.woodyc40.calamity;
 
+import com.gmail.woodyc40.calamity.bytes.ArrayByteStore;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
-import com.gmail.woodyc40.calamity.bytes.SafeArrayByteStore;
 import com.gmail.woodyc40.calamity.comp.Component;
 import com.gmail.woodyc40.calamity.indexer.DefaultIndexer;
 import com.gmail.woodyc40.calamity.indexer.Indexer;
+import com.gmail.woodyc40.calamity.marshal.DefaultMarshallingResolver;
+import com.gmail.woodyc40.calamity.marshal.MarshallingResolver;
 import com.gmail.woodyc40.calamity.resize.DoublingResizer;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 import com.gmail.woodyc40.calamity.util.Constants;
@@ -36,7 +38,7 @@ public final class CalamityOptions {
     /**
      * The implementation of the byte storage device to use
      */
-    private Supplier<ByteStore> byteStoreSupplier = SafeArrayByteStore::new;
+    private Supplier<ByteStore> byteStore = ArrayByteStore::new;
     /**
      * The resizing component to use for handling memory
      * reallocation
@@ -47,6 +49,10 @@ public final class CalamityOptions {
      * indexes
      */
     private Supplier<Indexer> indexer = DefaultIndexer::new;
+    /**
+     * The resolver component for handling byte transfers
+     */
+    private Supplier<MarshallingResolver> resolver = DefaultMarshallingResolver::new;
     /**
      * The limit on the byte size of this buffer
      */
@@ -121,7 +127,7 @@ public final class CalamityOptions {
      */
     public CalamityOptions byteStore(Supplier<ByteStore> byteStoreSupplier) {
         this.checkImmutable();
-        this.byteStoreSupplier = byteStoreSupplier;
+        this.byteStore = byteStoreSupplier;
         return this;
     }
 
@@ -146,6 +152,18 @@ public final class CalamityOptions {
     public CalamityOptions indexer(Supplier<Indexer> indexer) {
         this.checkImmutable();
         this.indexer = indexer;
+        return this;
+    }
+
+    /**
+     * Sets the resolver for the buffer.
+     *
+     * @param resolver the resolver to use
+     * @return the current instance of the options builder
+     */
+    public CalamityOptions marshaller(Supplier<MarshallingResolver> resolver) {
+        this.checkImmutable();
+        this.resolver = resolver;
         return this;
     }
 
@@ -224,12 +242,12 @@ public final class CalamityOptions {
      * Creates a new instance of the byte storage device.
      *
      * <p>By default, the byte store used is an instance
-     * of {@link SafeArrayByteStore}.</p>
+     * of {@link ArrayByteStore}.</p>
      *
      * @return the byte storage device
      */
     public ByteStore newByteStore() {
-        return this.byteStoreSupplier.get();
+        return this.byteStore.get();
     }
 
     /**
@@ -255,6 +273,20 @@ public final class CalamityOptions {
      */
     public Indexer newIndexer() {
         return this.indexer.get();
+    }
+
+    /**
+     * Obtains the resolver that will be used to hold the
+     * marshalling devices to transfer bytes to and from
+     * the buffer.
+     *
+     * <p>By default, the marshaller will be an instance of
+     * {@link DefaultMarshallingResolver}</p>
+     *
+     * @return the marshaller
+     */
+    public MarshallingResolver newResolver() {
+        return this.resolver.get();
     }
 
     /**
@@ -313,9 +345,10 @@ public final class CalamityOptions {
     public CalamityOptions copy() {
         return new CalamityOptions()
                 .initialLength(this.initialLength)
-                .byteStore(this.byteStoreSupplier)
+                .byteStore(this.byteStore)
                 .resizer(this.resizer)
                 .indexer(this.indexer)
+                .marshaller(this.resolver)
                 .maxLength(this.maxLength)
                 .autoFree(this.autoFree)
                 .threadSafe(this.threadSafe);
@@ -328,16 +361,23 @@ public final class CalamityOptions {
      * @return the new buffer
      */
     public CalamityBuf newBuf() {
-        ByteStore store = this.byteStoreSupplier.get();
+        ByteStore store = this.byteStore.get();
         Resizer resizer = this.newResizer();
         Indexer indexer = this.newIndexer();
+        MarshallingResolver marshaller = this.newResolver();
         if (this.threadSafe) {
             checkThreadSafety(store);
             checkThreadSafety(resizer);
             checkThreadSafety(indexer);
+            checkThreadSafety(marshaller);
         }
 
-        return CalamityBufImpl.alloc(this.copy().lock(true));
+        CalamityBufImpl buf = CalamityBufImpl.alloc(this.copy().lock(true));
+        if (this.threadSafe) {
+            checkThreadSafety(buf);
+        }
+
+        return buf;
     }
 
     /**

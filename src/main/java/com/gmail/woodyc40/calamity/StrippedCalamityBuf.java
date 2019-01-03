@@ -3,12 +3,25 @@ package com.gmail.woodyc40.calamity;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.indexer.IndexKey;
 import com.gmail.woodyc40.calamity.indexer.Indexer;
+import com.gmail.woodyc40.calamity.marshal.MarshallingResolver;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 
-public interface StrippedCalmityBuf {
+/**
+ * The Calamity buffers specification.
+ *
+ * <p>The standard buffer implemented by the Calamity
+ * buffers API conforms to the specification provided by
+ * this class. This provides a consistent platform for which
+ * implementors can attach their own components to the
+ * buffer and customize functionality without losing basic
+ * access and buffer control.</p>
+ *
+ * @author agenttroll
+ */
+public interface StrippedCalamityBuf {
     /**
      * Obtains the memory storage scheme used by the buffer.
      *
@@ -33,6 +46,15 @@ public interface StrippedCalmityBuf {
      * @return the buffer indexer component
      */
     <T extends Indexer> T indexer();
+
+    /**
+     * Obtains the resolver used to transfer input bytes
+     * into the buffer and buffered bytes into output.
+     *
+     * @param <T> the type of resolver used
+     * @return the marshal resolver used by this buffer
+     */
+    <T extends MarshallingResolver> T resolver();
 
     /**
      * Obtains the instance of the options builder used to

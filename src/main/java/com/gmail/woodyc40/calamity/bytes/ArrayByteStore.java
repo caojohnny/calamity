@@ -25,13 +25,11 @@ public class ArrayByteStore implements ByteStore {
 
     @Override
     public void setLength(int newLength) {
-        if (this.bytes == null) {
-            this.bytes = new byte[newLength];
-            return;
+        byte[] newBytes = new byte[newLength];
+        if (this.bytes != null) {
+            System.arraycopy(this.bytes, 0, newBytes, 0, this.bytes.length);
         }
 
-        byte[] newBytes = new byte[newLength];
-        System.arraycopy(this.bytes, 0, newBytes, 0, this.bytes.length);
         this.bytes = newBytes;
     }
 
@@ -40,13 +38,29 @@ public class ArrayByteStore implements ByteStore {
         return this.bytes;
     }
 
-    public byte[] getRaw() {
-        return this.bytes;
-    }
-
     @Override
     public boolean isArrayRaw() {
         return true;
+    }
+
+    @Override
+    public void write(int idx, byte b) {
+        this.bytes[idx] = b;
+    }
+
+    @Override
+    public byte read(int idx) {
+        return this.bytes[idx];
+    }
+
+    @Override
+    public void write(int toIndex, byte[] from, int fromIndex, int length) {
+        System.arraycopy(from, fromIndex, this.bytes, toIndex, length);
+    }
+
+    @Override
+    public void read(int toIndex, byte[] to, int fromIndex, int length) {
+        System.arraycopy(this.bytes, fromIndex, to, toIndex, length);
     }
 
     @Override

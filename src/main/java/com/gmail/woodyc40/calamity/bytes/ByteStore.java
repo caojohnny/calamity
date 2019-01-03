@@ -67,6 +67,72 @@ public interface ByteStore extends Component {
     boolean isArrayRaw();
 
     /**
+     * Writes a single discrete byte into this byte storage
+     * at the given index.
+     *
+     * <p>Behavior stemming from writing a byte value into
+     * an out-of-bounds index is not defined by this
+     * specification.</p>
+     *
+     * @param idx the index at which to set the byte in
+     *            the storage space
+     * @param b the byte value to write
+     */
+    void write(int idx, byte b);
+
+    /**
+     * Reads a single discrete byte from this storage at
+     * the given index.
+     *
+     * <p>Behavior stemming from reading an out-of-bounds
+     * index value is not defined by this specification.</p>
+     *
+     * @param idx the index at which to read the byte
+     * @return the byte located at this storage
+     */
+    byte read(int idx);
+
+    /**
+     * Writes the given bytes from the given array into this
+     * byte storage.
+     *
+     * <p>It is up to implementers to determine whether or
+     * not out of bounds errors or errors in input will be
+     * ignored. If the {@code length} is out of bounds of
+     * the source array, then it is completely possible for
+     * nothing to happen at all.</p>
+     *
+     * @param toIndex the index at which to begin writing
+     *                bytes into this byte storage
+     * @param from the array of bytes to transfer into this
+     *             byte storage
+     * @param fromIndex the index of the source array which
+     *                  to begin transferring bytes
+     * @param length the number of bytes to transfer
+     */
+    void write(int toIndex, byte[] from, int fromIndex, int length);
+
+    /**
+     * Reads the bytes from this storage into the given
+     * array.
+     *
+     * <p>It is up to implementers to determine whether or
+     * not out of bounds errors or errors in input will be
+     * ignored. If the {@code length} is out of bounds of
+     * the byte storage, then it is completely possible for
+     * nothing to happen at all.</p>
+     *
+     * @param toIndex the index at which to begin writing
+     *                bytes into the given array
+     * @param to the array of bytes to receive the bytes
+     *           from this storage
+     * @param fromIndex the index of the byte storage which
+     *                  to begin transferring bytes
+     * @param length the number of bytes to transfer
+     */
+    void read(int toIndex, byte[] to, int fromIndex, int length);
+
+    /**
      * Resets the byte storage area, without necessarily
      * freeing memory (although that may be done as well).
      *

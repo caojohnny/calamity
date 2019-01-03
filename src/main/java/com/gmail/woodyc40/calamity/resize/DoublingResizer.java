@@ -1,6 +1,7 @@
 package com.gmail.woodyc40.calamity.resize;
 
 import com.gmail.woodyc40.calamity.CalamityBuf;
+import com.gmail.woodyc40.calamity.StrippedCalamityBuf;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.util.Constants;
 
@@ -17,7 +18,7 @@ public class DoublingResizer implements Resizer {
     public static final Supplier<Resizer> SUPPLIER = Constants.supplyConst(new DoublingResizer());
 
     @Override
-    public void resize(CalamityBuf buf, int beginIndex, int length) {
+    public void resize(StrippedCalamityBuf buf, int beginIndex, int length) {
         ByteStore byteStore = buf.byteStore();
 
         int newLength = byteStore.length();

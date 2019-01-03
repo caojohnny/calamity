@@ -1,6 +1,6 @@
 package com.gmail.woodyc40.calamity.resize;
 
-import com.gmail.woodyc40.calamity.CalamityBuf;
+import com.gmail.woodyc40.calamity.StrippedCalamityBuf;
 import com.gmail.woodyc40.calamity.comp.Component;
 
 /**
@@ -38,5 +38,5 @@ public interface Resizer extends Component {
      * @param length the number of bytes to be added
      * starting at the {@code beginIndex}
      */
-    void resize(CalamityBuf buf, int beginIndex, int length);
+    void resize(StrippedCalamityBuf buf, int beginIndex, int length);
 }

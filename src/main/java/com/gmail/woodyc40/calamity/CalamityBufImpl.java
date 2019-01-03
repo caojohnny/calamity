@@ -3,6 +3,7 @@ package com.gmail.woodyc40.calamity;
 import com.gmail.woodyc40.calamity.bytes.ByteStore;
 import com.gmail.woodyc40.calamity.indexer.IndexKey;
 import com.gmail.woodyc40.calamity.indexer.Indexer;
+import com.gmail.woodyc40.calamity.marshal.MarshallingResolver;
 import com.gmail.woodyc40.calamity.resize.Resizer;
 
 /**
@@ -29,6 +30,11 @@ public class CalamityBufImpl implements CalamityBuf {
      * The indexer used to hold index key to index mappings
      */
     private final Indexer indexer;
+    /**
+     * The marshaller used to transfer bytes to and from the
+     * buffer
+     */
+    private final MarshallingResolver resolver;
 
     /**
      * Creates the buffer implementation with the given
@@ -42,6 +48,7 @@ public class CalamityBufImpl implements CalamityBuf {
         this.byteStore = options.newByteStore();
         this.resizer = options.newResizer();
         this.indexer = options.newIndexer();
+        this.resolver = options.newResolver();
     }
 
     /**
@@ -85,6 +92,11 @@ public class CalamityBufImpl implements CalamityBuf {
     }
 
     @Override
+    public <T extends MarshallingResolver> T resolver() {
+        return (T) this.resolver;
+    }
+
+    @Override
     public CalamityOptions options() {
         return this.options;
     }
@@ -101,21 +113,22 @@ public class CalamityBufImpl implements CalamityBuf {
 
     @Override
     public void write(int idx, byte b) {
+        this.byteStore.write(idx, b);
     }
 
     @Override
     public byte read(int idx) {
-        return 0;
+        return this.byteStore.read(idx);
     }
 
     @Override
-    public int writeFrom(int toIndex, byte[] from, int fromIndex, int length) {
-        return 0;
+    public int write(int toIndex, byte[] from, int fromIndex, int length) {
+        return this.resolver.defaultMarshaller().write(this, toIndex, from, fromIndex, length);
     }
 
     @Override
-    public int readTo(int toIndex, byte[] to, int fromIndex, int length) {
-        return 0;
+    public int read(int toIndex, byte[] to, int fromIndex, int length) {
+        return this.resolver.defaultMarshaller().read(this, toIndex, to, fromIndex, length);
     }
 
     @Override
@@ -129,6 +142,7 @@ public class CalamityBufImpl implements CalamityBuf {
         this.byteStore.free();
         this.resizer.free();
         this.indexer.free();
+        this.resolver.free();
     }
 
     @Override
@@ -139,6 +153,7 @@ public class CalamityBufImpl implements CalamityBuf {
         this.byteStore.init(this);
         this.resizer.init(this);
         this.indexer.init(this);
+        this.resolver.init(this);
     }
 
     @Override

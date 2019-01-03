@@ -7,18 +7,9 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 
 /**
- * The Calamity buffers specification.
  *
- * <p>The standard buffer implemented by the Calamity
- * buffers API conforms to the specification provided by
- * this class. This provides a consistent platform for which
- * implementors can attach their own components to the
- * buffer and customize functionality without losing basic
- * access and buffer control.</p>
- *
- * @author agenttroll
  */
-public interface CalamityBuf extends Component, StrippedCalmityBuf {
+public interface CalamityBuf extends Component, StrippedCalamityBuf {
     /**
      * Appends the given byte to the space at which the
      * writer {@link #idx(IndexKey)} points.
@@ -38,7 +29,9 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * @param b the byte to write
      */
     default void write(byte b) {
-        this.write(this.idx(WRITER), b);
+        int idx = this.idx(WRITER);
+        this.write(idx, b);
+        this.idx(WRITER, idx + 1);
     }
 
     /**
@@ -69,7 +62,11 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * buffer
      */
     default byte read() {
-        return this.read(this.idx(READER));
+        int idx = this.idx(READER);
+        byte b = this.read(idx);
+        this.idx(WRITER, idx + 1);
+
+        return b;
     }
 
     /**
@@ -93,8 +90,8 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * @return the number of bytes that were actually
      * written into the buffer
      */
-    default int writeFrom(byte[] from) {
-        return this.writeFrom(this.idx(WRITER), from, 0, from.length);
+    default int write(byte[] from) {
+        return this.write(this.idx(WRITER), from, 0, from.length);
     }
 
     /**
@@ -108,7 +105,7 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * @return the number of bytes that were actually
      * written into the buffer
      */
-    int writeFrom(int toIndex, byte[] from, int fromIndex, int length);
+    int write(int toIndex, byte[] from, int fromIndex, int length);
 
     /**
      * Reads from this buffer beginning at the
@@ -125,8 +122,8 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * contents
      * @return the number of bytes written into {@code to}
      */
-    default int readTo(byte[] to) {
-        return this.readTo(0, to, this.idx(READER), to.length);
+    default int read(byte[] to) {
+        return this.read(0, to, this.idx(READER), to.length);
     }
 
     /**
@@ -145,7 +142,7 @@ public interface CalamityBuf extends Component, StrippedCalmityBuf {
      * buffer
      * @return the number of bytes written into {@code to}
      */
-    int readTo(int toIndex, byte[] to, int fromIndex, int length);
+    int read(int toIndex, byte[] to, int fromIndex, int length);
 
     /**
      * Resets the indexes of the buffer.

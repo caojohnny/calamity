@@ -13,6 +13,17 @@ package com.gmail.woodyc40.calamity.bytes;
  * @author agenttroll
  */
 public class SafeArrayByteStore extends ArrayByteStore {
+    /**
+     * Obtains the raw array instead of returning a copy,
+     * for internal use.
+     *
+     * @return the raw array, in which changes made will be
+     * reflected in the array held by this {@link ByteStore}
+     */
+    public byte[] raw() {
+        return super.array();
+    }
+
     @Override
     public byte[] array() {
         byte[] source = super.array();
