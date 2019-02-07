@@ -2,6 +2,13 @@ package com.gmail.woodyc40.calamity.marshal;
 
 import com.gmail.woodyc40.calamity.CalamityBuf;
 
+/**
+ * The default marshaller provides support for adding byte
+ * array types to the buffer. It provides no expansion
+ * capabilities which to resolve other types.
+ *
+ * @author agenttroll
+ */
 public class DefaultMarshallingResolver implements MarshallingResolver {
     private static final Marshaller<byte[]> BYTE_ARR_MARSHALLER =
             new DefaultMarshaller();

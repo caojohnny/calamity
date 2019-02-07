@@ -6,10 +6,30 @@ import com.gmail.woodyc40.calamity.util.Object2IntOpenHashMap;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 
+/**
+ * The default indexing component which provides the
+ * capability to add new index keys and use a fast-path
+ * to lookup the {@link IdentityIndexKey#READER} and the
+ * {@link IdentityIndexKey#WRITER} keys.
+ *
+ * @author agenttroll
+ */
 public class DefaultIndexer implements Indexer {
+    /**
+     * The cached reader index, used to fast path the
+     * {@link IdentityIndexKey#READER} key
+     */
     private int readerIndex;
+    /**
+     * The cached reader index, used to fast path the
+     * {@link IdentityIndexKey#WRITER} key
+     */
     private int writerIndex;
 
+    /**
+     * An index key lookup map used to provide capability
+     * for key expansion
+     */
     private final Object2IntOpenHashMap<IndexKey> indexes =
             new Object2IntOpenHashMap<>();
 
