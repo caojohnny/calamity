@@ -6,6 +6,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 import static org.junit.Assert.assertEquals;
 
@@ -18,8 +19,8 @@ public class CalamityBufImplTest {
     }
 
     @When("^byte value (\\d+) is added to the end$")
-    public void byteValueIsAddedToTheEnd(byte value) {
-        this.buf.write(value);
+    public void byteValueIsAddedToTheEnd(int value) {
+        this.buf.write((byte) value);
     }
 
     @Then("^the buffer size should be (\\d+)$")
@@ -29,6 +30,6 @@ public class CalamityBufImplTest {
 
     @And("^byte at the end should be (\\d+)$")
     public void byteAtTheEndShouldBe(int value) {
-        assertEquals(value, this.buf.read(this.buf.idx(WRITER)));
+        assertEquals(value, this.buf.read(this.buf.idx(READER)));
     }
 }
