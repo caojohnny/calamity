@@ -7,7 +7,12 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.READER;
 import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
 
 /**
+ * The standard specification interface for a buffer. This
+ * extends upon the {@link StrippedCalamityBuf}, providing
+ * the buffer interaction mechanisms in a coherent manner,
+ * e.g. writing and reading from the components.
  *
+ * @author agenttroll
  */
 public interface CalamityBuf extends Component, StrippedCalamityBuf {
     /**
