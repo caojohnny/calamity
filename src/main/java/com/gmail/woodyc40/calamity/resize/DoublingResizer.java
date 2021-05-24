@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * {@link ByteStore} or until there is sufficient memory to
  * hold the incoming data, whichever one is smaller.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class DoublingResizer implements Resizer {
     public static final Supplier<Resizer> SUPPLIER = Constants.supplyConst(new DoublingResizer());

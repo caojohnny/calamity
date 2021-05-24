@@ -9,7 +9,7 @@ The point of calamity is to get rid of the calamity that is working with byte ar
 # Building
 
 ``` shell
-git clone https://github.com/AgentTroll/calamity.git
+git clone https://github.com/caojohnny/calamity.git
 cd calamity
 mvn clean install
 ```

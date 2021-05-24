@@ -9,7 +9,7 @@ import com.gmail.woodyc40.calamity.CalamityBuf;
  * in order to build sufficient context for creating and
  * defining extensions to what is already available.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface Component {
     /**

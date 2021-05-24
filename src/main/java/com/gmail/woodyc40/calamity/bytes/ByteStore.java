@@ -8,7 +8,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  * <p>All buffers contain a {@code ByteStore} in order to
  * hold bytes in memory.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  * @implNote {@code ByteStore} objects should always be
  * initialized lazily, in order to save memory allocation
  * until the buffer is actually initialized.

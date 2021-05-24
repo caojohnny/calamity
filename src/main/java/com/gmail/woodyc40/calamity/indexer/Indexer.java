@@ -7,7 +7,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  * mappings, i.e. index key to the index that has been set
  * to that key in the buffer.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface Indexer extends Component  {
     /**

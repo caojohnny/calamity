@@ -10,7 +10,7 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
  * The default marshaller supports marshalling of byte
  * arrays to and from the buffer.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class DefaultMarshaller implements Marshaller<byte[]> {
     @Override

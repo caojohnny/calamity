@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * <p>Default values returned can be determined from looking
  * at the JavaDoc comments for each getter method.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public final class CalamityOptions {
     /**

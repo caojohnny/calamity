@@ -12,7 +12,7 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
  * to lookup the {@link IdentityIndexKey#READER} and the
  * {@link IdentityIndexKey#WRITER} keys.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class DefaultIndexer implements Indexer {
     /**

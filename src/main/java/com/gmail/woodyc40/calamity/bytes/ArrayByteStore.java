@@ -10,7 +10,7 @@ import com.gmail.woodyc40.calamity.CalamityBuf;
  * <p>The array returned by this store's {@link #array()}
  * method is the raw underlying array.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class ArrayByteStore implements ByteStore {
     /**

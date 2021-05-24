@@ -8,7 +8,7 @@ package com.gmail.woodyc40.calamity.indexer;
  * by creating a new instance of the index key using the
  * same key identifier.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class IndexKey {
     /**

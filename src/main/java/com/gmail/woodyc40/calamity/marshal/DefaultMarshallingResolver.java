@@ -7,7 +7,7 @@ import com.gmail.woodyc40.calamity.CalamityBuf;
  * array types to the buffer. It provides no expansion
  * capabilities which to resolve other types.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class DefaultMarshallingResolver implements MarshallingResolver {
     private static final Marshaller<byte[]> BYTE_ARR_MARSHALLER =

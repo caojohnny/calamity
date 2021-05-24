@@ -11,7 +11,7 @@ import com.gmail.woodyc40.calamity.resize.Resizer;
  * specification, making use of different components passed
  * in to define functionality of the buffer.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class CalamityBufImpl implements CalamityBuf {
     /**

@@ -10,7 +10,7 @@ package com.gmail.woodyc40.calamity.indexer;
  * {@link IdentityIndexKey}s in a buffer if the same
  * instance of the key is not used.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public final class IdentityIndexKey extends IndexKey {
     /**

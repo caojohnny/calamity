@@ -23,7 +23,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  * check the length and desired length of allocated memory
  * at all times.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface Resizer extends Component {
     /**

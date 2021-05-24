@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 /**
  * A set of constants used by components and buffers.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public final class Constants {
     /**

@@ -6,7 +6,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  * A resolver helps the buffer select an appropriate tool to
  * convert/marshal input and buffer contents into output.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface MarshallingResolver extends Component {
     /**

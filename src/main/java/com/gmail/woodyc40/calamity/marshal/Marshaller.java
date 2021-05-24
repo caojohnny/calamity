@@ -9,7 +9,7 @@ import com.gmail.woodyc40.calamity.comp.Component;
  * from a given object into the buffer, and vice versa.
  *
  * @param <T> the type that is marshalled
- * @author agenttroll
+ * @author caojohnny
  */
 public interface Marshaller<T> extends Component {
     /**

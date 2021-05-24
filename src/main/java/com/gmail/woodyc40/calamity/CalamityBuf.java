@@ -12,7 +12,7 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
  * the buffer interaction mechanisms in a coherent manner,
  * e.g. writing and reading from the components.
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface CalamityBuf extends Component, StrippedCalamityBuf {
     /**

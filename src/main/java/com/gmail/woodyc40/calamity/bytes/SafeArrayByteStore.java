@@ -10,7 +10,7 @@ package com.gmail.woodyc40.calamity.bytes;
  * when the bytes need to be manipulated independently from
  * the actual buffer.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public class SafeArrayByteStore extends ArrayByteStore {
     /**

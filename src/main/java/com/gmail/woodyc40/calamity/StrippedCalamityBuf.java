@@ -19,7 +19,7 @@ import static com.gmail.woodyc40.calamity.indexer.IdentityIndexKey.WRITER;
  * buffer and customize functionality without losing basic
  * access and buffer control.</p>
  *
- * @author agenttroll
+ * @author caojohnny
  */
 public interface StrippedCalamityBuf {
     /**
